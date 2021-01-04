@@ -17,13 +17,19 @@
 #define LOG_MODULE_NAME spinel_ipc_backend
 LOG_MODULE_REGISTER(LOG_MODULE_NAME);
 
+#define IPC_MASTER IS_ENABLED(CONFIG_RPMSG_SERVICE_MODE_MASTER)
+
 static K_SEM_DEFINE(ready_sem, 0, 1);
 static int endpoint_id;
+
+#if IPC_MASTER
 
 static bool endpoint_is_bound(void)
 {
 	return rpmsg_service_endpoint_is_bound(endpoint_id);
 }
+
+#endif
 
 static int endpoint_cb(struct rpmsg_endpoint *ept,
 		       void                  *data,
