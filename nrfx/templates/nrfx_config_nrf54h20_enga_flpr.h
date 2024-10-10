@@ -294,8 +294,35 @@
  *
  * Boolean. Accepted values: 0 and 1.
  */
-#ifndef NRFX_GRTC_CONFIG_SLEEP_ALLOWED
-#define NRFX_GRTC_CONFIG_SLEEP_ALLOWED 0
+#ifndef NRFX_DPPI134_ENABLED
+#define NRFX_DPPI134_ENABLED 0
+#endif
+
+/**
+ * @brief NRFX_DPPI135_ENABLED
+ *
+ * Boolean. Accepted values: 0 and 1.
+ */
+#ifndef NRFX_DPPI135_ENABLED
+#define NRFX_DPPI135_ENABLED 0
+#endif
+
+/**
+ * @brief NRFX_DPPI136_ENABLED
+ *
+ * Boolean. Accepted values: 0 and 1.
+ */
+#ifndef NRFX_DPPI136_ENABLED
+#define NRFX_DPPI136_ENABLED 0
+#endif
+
+/**
+ * @brief NRFX_GRTC_ENABLED
+ *
+ * Boolean. Accepted values: 0 and 1.
+ */
+#ifndef NRFX_GRTC_ENABLED
+#define NRFX_GRTC_ENABLED 0
 #endif
 
 /**
