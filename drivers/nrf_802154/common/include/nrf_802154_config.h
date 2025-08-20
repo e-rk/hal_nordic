@@ -387,16 +387,6 @@ extern "C" {
 #endif
 
 /**
- * @def NRF_802154_ACK_TIMEOUT_DEFAULT_TIMEOUT
- *
- * The default timeout in microseconds (us) for the ACK timeout feature.
- *
- */
-#ifndef NRF_802154_ACK_TIMEOUT_DEFAULT_TIMEOUT
-#define NRF_802154_ACK_TIMEOUT_DEFAULT_TIMEOUT 7000
-#endif
-
-/**
  * @def NRF_802154_PRECISE_ACK_TIMEOUT_DEFAULT_TIMEOUT
  *
  * The default timeout in microseconds (us) for the precise ACK timeout feature.
@@ -603,6 +593,22 @@ extern "C" {
  */
 #ifndef NRF_802154_REQUEST_IMPL
 #define NRF_802154_REQUEST_IMPL NRF_802154_REQUEST_IMPL_SWI
+#endif
+
+/**
+ * @}
+ * @defgroup nrf_802154_tx_timestamp_provider Transmit Timestamp configuration
+ * @{
+ */
+
+/**
+ * @def NRF_802154_TX_TIMESTAMP_PROVIDER_ENABLED
+ *
+ * Enables the Transmit Timestamp Provider module. The module encodes the transmission
+ * start timestamp in a frame's payload upon request.
+ */
+#ifndef NRF_802154_TX_TIMESTAMP_PROVIDER_ENABLED
+#define NRF_802154_TX_TIMESTAMP_PROVIDER_ENABLED 0
 #endif
 
 /** @} */

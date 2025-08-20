@@ -371,18 +371,11 @@ void nrf_802154_short_address_set(const uint8_t * p_short_address);
  */
 void nrf_802154_alternate_short_address_set(const uint8_t * p_short_address);
 
-#if !NRF_802154_SERIALIZATION_HOST || defined(DOXYGEN)
 /**
  * @}
- * @defgroup nrf_802154_transitions Functions to request FSM transitions and check current state
+ * @defgroup nrf_802154_transitions Functions to request FSM transitions
  * @{
  */
-
-/**
- * @brief Gets the current state of the radio.
- */
-nrf_802154_state_t nrf_802154_state_get(void);
-#endif // !NRF_802154_SERIALIZATION_HOST
 
 /**
  * @brief Changes the radio state to the @ref RADIO_STATE_SLEEP state.
@@ -521,6 +514,10 @@ bool nrf_802154_receive_at_scheduled_cancel(uint32_t id);
  * @note This function is implemented in zero-copy fashion. It passes the given buffer pointer to
  *       the RADIO peripheral.
  *
+ * @note Setting @p tx_timestamp_encode to true is only allowed if
+ *       @ref NRF_802154_TX_TIMESTAMP_PROVIDER_ENABLED is enabled.
+ *       If this condition is not met, any attempt to transmit a frame will fail unconditionally.
+ *
  * In the transmit state, the radio transmits a given frame. If requested, it waits for
  * an ACK frame. Depending on @ref NRF_802154_ACK_TIMEOUT_ENABLED, the radio driver automatically
  * stops waiting for an ACK frame or waits indefinitely for an ACK frame. If it is configured to
@@ -549,6 +546,7 @@ bool nrf_802154_receive_at_scheduled_cancel(uint32_t id);
  *                         ----------------|-----------------------------------------------------
  *                         @c frame_props  | @ref NRF_802154_TRANSMITTED_FRAME_PROPS_DEFAULT_INIT
  *                         @c cca          | @c true
+ *                         @c tx_timestamp_encode | @c false
  *
  * @retval  true   The transmission procedure was scheduled.
  * @retval  false  The driver could not schedule the transmission procedure.
@@ -609,6 +607,10 @@ bool nrf_802154_transmit_raw(uint8_t                              * p_data,
  * A successfully scheduled transmission can be cancelled by a call
  * to @ref nrf_802154_transmit_at_cancel.
  *
+ * @note Setting @p tx_timestamp_encode to true is only allowed if
+ *       @ref NRF_802154_TX_TIMESTAMP_PROVIDER_ENABLED is enabled.
+ *       If this condition is not met, any attempt to transmit a frame will fail unconditionally.
+ *
  * @param[in]  p_data      Pointer to the array with data to transmit. The first byte must contain
  *                         the frame length (including FCS). The following bytes contain data.
  *                         The CRC is computed automatically by the radio hardware. Therefore,
@@ -623,6 +625,7 @@ bool nrf_802154_transmit_raw(uint8_t                              * p_data,
  *                         @c channel            | As returned by @ref nrf_802154_channel_get
  *                         @c tx_power           | As set with @ref nrf_802154_tx_power_set
  *                         @c extra_cca_attempts | @c 0
+ *                         @c tx_timestamp_encode | @c 0
  *
  * @retval  true   The transmission procedure was scheduled.
  * @retval  false  The driver could not schedule the transmission procedure.
@@ -720,31 +723,13 @@ bool nrf_802154_modulated_carrier(const uint8_t * p_data);
  * @brief Notifies the driver that the buffer containing the received frame is not used anymore.
  *
  * @note The buffer pointed to by @p p_data may be modified by this function.
- * @note This function can be safely called only from the main context. To free the buffer from
- *       a callback or the IRQ context, use @ref nrf_802154_buffer_free_immediately_raw.
+ * @note This function can be safely called from the main context or callouts running on the
+ *       same core as the driver. Do not call this function directly in the serialized callouts.
  *
  * @param[in]  p_data  Pointer to the buffer containing the received data that is no longer needed
  *                     by the higher layer.
  */
 void nrf_802154_buffer_free_raw(uint8_t * p_data);
-
-#if !NRF_802154_SERIALIZATION_HOST || defined(DOXYGEN)
-/**
- * @brief Notifies the driver that the buffer containing the received frame is not used anymore.
- *
- * @note The buffer pointed to by @p p_data may be modified by this function.
- * @note This function can be safely called from any context. If the driver is busy processing
- *       a request called from a context with lower priority, this function returns false and
- *       the caller should free the buffer later.
- *
- * @param[in]  p_data  Pointer to the buffer containing the received data that is no longer needed
- *                     by the higher layer.
- *
- * @retval true   Buffer was freed successfully.
- * @retval false  Buffer cannot be freed right now due to ongoing operation.
- */
-bool nrf_802154_buffer_free_immediately_raw(uint8_t * p_data);
-#endif // !NRF_802154_SERIALIZATION_HOST
 
 /**
  * @}
@@ -1086,11 +1071,11 @@ void nrf_802154_cca_cfg_get(nrf_802154_cca_cfg_t * p_cca_cfg);
  * @note The driver may be configured to automatically time out waiting for an ACK frame depending
  *       on @ref NRF_802154_ACK_TIMEOUT_ENABLED. If the automatic ACK timeout is disabled,
  *       the CSMA-CA procedure does not time out waiting for an ACK frame if a frame
- *       with the ACK request bit set was transmitted. The MAC layer is expected to manage the timer
- *       to time out waiting for the ACK frame. This timer can be started
- *       by @ref nrf_802154_tx_started. When the timer expires, the MAC layer is expected
- *       to call @ref nrf_802154_receive or @ref nrf_802154_sleep to stop waiting for the ACK frame.
+ *       with the ACK request bit set was transmitted.
  * @note This function is available if @ref NRF_802154_CSMA_CA_ENABLED is enabled.
+ * @note Setting @p tx_timestamp_encode to true is only allowed if
+ *       @ref NRF_802154_TX_TIMESTAMP_PROVIDER_ENABLED is enabled.
+ *       If this condition is not met, any attempt to transmit a frame will fail unconditionally.
  *
  * @param[in]  p_data      Pointer to the frame to transmit. See also @ref nrf_802154_transmit_raw.
  * @param[in]  p_metadata  Pointer to metadata structure. Contains detailed properties of data
@@ -1098,6 +1083,7 @@ void nrf_802154_cca_cfg_get(nrf_802154_cca_cfg_t * p_cca_cfg);
  *                         Field           | Value
  *                         ----------------|-----------------------------------------------------
  *                         @c frame_props  | @ref NRF_802154_TRANSMITTED_FRAME_PROPS_DEFAULT_INIT
+ *                         @c tx_timestamp_encode | false
  *
  * @retval  true   The chain of CSMA-CA and transmission procedure was scheduled.
  * @retval  false  The driver could not schedule the procedure chain.
