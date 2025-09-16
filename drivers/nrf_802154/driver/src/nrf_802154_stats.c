@@ -61,7 +61,7 @@ void nrf_802154_stat_counters_subtract(const nrf_802154_stat_counters_t * p_stat
     {
         nrf_802154_mcu_critical_state_t mcu_cs;
 
-        nrf_802154_mcu_critical_enter(mcu_cs);
+        mcu_cs  = nrf_802154_mcu_critical_enter();
         *p_dst -= *p_src;
         nrf_802154_mcu_critical_exit(mcu_cs);
 
