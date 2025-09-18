@@ -92,6 +92,7 @@ typedef uint8_t nrf_802154_tx_error_t;
 #define NRF_802154_TX_ERROR_KEY_ID_INVALID           0x08 // !< Transmission did not start due to invalid key ID in frame's security header.
 #define NRF_802154_TX_ERROR_FRAME_COUNTER_ERROR      0x09 // !< Transmission did not start due a frame counter error.
 #define NRF_802154_TX_ERROR_TIMESTAMP_ENCODING_ERROR 0x0A // !< Timestamp could not been encoded in the transmission process.
+#define NRF_802154_TX_ERROR_INVALID_REQUEST          0x0B // !< The frame or transmit metadata is invalid.
 
 /**
  * @brief Possible errors during the frame reception.
@@ -439,10 +440,10 @@ typedef struct
  */
 typedef struct
 {
-    nrf_802154_transmitted_frame_props_t frame_props; // !< Properties of the frame to be transmitted.
-    bool                                 cca;         // !< If the driver is to perform a CCA procedure before transmission.
-    nrf_802154_tx_power_metadata_t       tx_power;    // !< Information about the TX power to be used.
-    nrf_802154_tx_channel_metadata_t     tx_channel;  // !< Information about the TX channel to be used.
+    nrf_802154_transmitted_frame_props_t frame_props;         // !< Properties of the frame to be transmitted.
+    bool                                 cca;                 // !< If the driver is to perform a CCA procedure before transmission.
+    nrf_802154_tx_power_metadata_t       tx_power;            // !< Information about the TX power to be used.
+    nrf_802154_tx_channel_metadata_t     tx_channel;          // !< Information about the TX channel to be used.
     bool                                 tx_timestamp_encode; // !< True if the transmit timestamp shall be encoded in the payload.
 } nrf_802154_transmit_metadata_t;
 
@@ -451,11 +452,11 @@ typedef struct
  */
 typedef struct
 {
-    nrf_802154_transmitted_frame_props_t frame_props;        // !< Properties of the frame to be transmitted.
-    bool                                 cca;                // !< If the driver is to perform a CCA procedure before transmission.
-    uint8_t                              channel;            // !< Radio channel on which the frame is to be transmitted.
-    nrf_802154_tx_power_metadata_t       tx_power;           // !< Information about the TX power to be used.
-    uint8_t                              extra_cca_attempts; // !< Maximum number of additional CCA attempts that can be performed if the first attempt returns busy channel. Ignored if @ref cca equals @c false.
+    nrf_802154_transmitted_frame_props_t frame_props;         // !< Properties of the frame to be transmitted.
+    bool                                 cca;                 // !< If the driver is to perform a CCA procedure before transmission.
+    uint8_t                              channel;             // !< Radio channel on which the frame is to be transmitted.
+    nrf_802154_tx_power_metadata_t       tx_power;            // !< Information about the TX power to be used.
+    uint8_t                              extra_cca_attempts;  // !< Maximum number of additional CCA attempts that can be performed if the first attempt returns busy channel. Ignored if @ref cca equals @c false.
     bool                                 tx_timestamp_encode; // !< True if the transmit timestamp shall be encoded in the payload.
 } nrf_802154_transmit_at_metadata_t;
 
@@ -464,9 +465,9 @@ typedef struct
  */
 typedef struct
 {
-    nrf_802154_transmitted_frame_props_t frame_props; // !< Properties of the frame to be transmitted.
-    nrf_802154_tx_power_metadata_t       tx_power;    // !< Information about the TX power to be used.
-    nrf_802154_tx_channel_metadata_t     tx_channel;  // !< Information about the TX channel to be used.
+    nrf_802154_transmitted_frame_props_t frame_props;         // !< Properties of the frame to be transmitted.
+    nrf_802154_tx_power_metadata_t       tx_power;            // !< Information about the TX power to be used.
+    nrf_802154_tx_channel_metadata_t     tx_channel;          // !< Information about the TX channel to be used.
     bool                                 tx_timestamp_encode; // !< True if the transmit timestamp shall be encoded in the payload.
 } nrf_802154_transmit_csma_ca_metadata_t;
 
@@ -492,13 +493,6 @@ typedef struct
         } transmitted;       // !< Result values for a successful frame transmission.
     } data;                  // !< Result values that are valid only for successful operations.
 } nrf_802154_transmit_done_metadata_t;
-
-/**
- * @brief Function pointer used for notifying about transmission failure.
- */
-typedef void (* nrf_802154_transmit_failed_notification_t)(
-    nrf_802154_tx_error_t                       error,
-    const nrf_802154_transmit_done_metadata_t * p_meta);
 
 /**
  * @brief Structure that holds results of energy detection procedure.

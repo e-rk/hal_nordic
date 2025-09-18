@@ -56,10 +56,10 @@
 #define EDSAMPLE_MAX_REPORTED_VALUE (ED_RESULT_MAX / ED_RSSISCALE)                    ///< Maximal reported EDSAMPLE value (reported as 255)
 
 /** Minimum value of ED in dBm for conversion to units conforming IEEE Std. 802.15.4-2015 chapter 10.2.5. */
-#define ED_DBM_MIN (PHY_MIN_RECEIVER_SENSITIVITY + 10)
+#define ED_DBM_MIN                  (PHY_MIN_RECEIVER_SENSITIVITY + 10)
 
 /** Maximum value of ED in dBm for conversion to units conforming IEEE Std. 802.15.4-2015 chapter 10.2.5. */
-#define ED_DBM_MAX (EDSAMPLE_MAX_REPORTED_VALUE + ED_RSSIOFFS)
+#define ED_DBM_MAX                  (EDSAMPLE_MAX_REPORTED_VALUE + ED_RSSIOFFS)
 
 static inline uint8_t nrf_802154_addons_energy_level_from_dbm_calculate(int8_t ed_dbm)
 {

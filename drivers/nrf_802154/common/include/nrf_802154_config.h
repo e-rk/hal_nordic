@@ -553,7 +553,7 @@ extern "C" {
  * Use nrf_802154_notification_swi.c implementation.
  * See @ref NRF_802154_NOTIFICATION_IMPL.
  */
-#define NRF_802154_NOTIFICATION_IMPL_SWI  1
+#define NRF_802154_NOTIFICATION_IMPL_SWI    1
 
 /**
  * @def NRF_802154_NOTIFICATION_IMPL
@@ -635,11 +635,12 @@ extern "C" {
 #endif
 
 #if NRF_802154_TX_DIAGNOSTIC_MODE
-#if NRF_802154_IE_WRITER_ENABLED || \
-    NRF_802154_SECURITY_WRITER_ENABLED || \
-    NRF_802154_ENCRYPTION_ENABLED || \
+#if NRF_802154_IE_WRITER_ENABLED ||      \
+    NRF_802154_SECURITY_WRITER_ENABLED ||\
+    NRF_802154_ENCRYPTION_ENABLED ||     \
     NRF_802154_TX_TIMESTAMP_PROVIDER_ENABLED
-#error "TX Diagnostic mode is not compatible with IE writer, Security writer, Encryption, and TX timestamp."
+#error \
+    "TX Diagnostic mode is not compatible with IE writer, Security writer, Encryption, and TX timestamp."
 #endif
 #endif
 
